@@ -19,7 +19,7 @@ function MyApplications() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+useEffect(() => {
     loadApplications();
   }, []);
 
@@ -28,17 +28,19 @@ function MyApplications() {
       setLoading(true);
       setError("");
       const apps = await applicationService.getByCandidateId("1");
-      
+
       const appsWithDetails = await Promise.all(
         apps.map(async (app) => {
-          const job = await jobService.getById(app.jobId);
-          const employer = await employerService.getByUserId(job.employerId);
+          const jobId = app.job_id_c?.Id || app.job_id_c;
+          const job = await jobService.getById(jobId);
+          const employerId = job.employer_id_c?.Id || job.employer_id_c;
+          const employer = await employerService.getByUserId(employerId);
           return { ...app, job, employer };
         })
       );
 
       const sorted = appsWithDetails.sort(
-        (a, b) => new Date(b.appliedAt) - new Date(a.appliedAt)
+        (a, b) => new Date(b.applied_at_c) - new Date(a.applied_at_c)
       );
       setApplications(sorted);
     } catch (err) {
@@ -75,11 +77,11 @@ function MyApplications() {
       </div>
 
       <div className="space-y-4">
-        {applications.map((application) => (
+{applications.map((application) => (
           <Card
             key={application.Id}
             hover
-            onClick={() => navigate(`/jobs/${application.jobId}`)}
+            onClick={() => navigate(`/jobs/${application.job_id_c?.Id || application.job_id_c}`)}
             className="p-6"
           >
             <div className="flex items-start justify-between">
@@ -92,35 +94,35 @@ function MyApplications() {
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <h3 className="text-xl font-semibold text-slate-900 mb-1">
-                        {application.job.title}
+                        {application.job?.title_c || application.job?.Name}
                       </h3>
                       <p className="text-slate-600 font-medium">
-                        {application.employer.companyName}
+                        {application.employer?.company_name_c || "Unknown Company"}
                       </p>
                     </div>
-                    <StatusPill status={application.status} />
+                    <StatusPill status={application.status_c} />
                   </div>
 
                   <div className="flex flex-wrap gap-4 text-sm text-slate-600 mb-3">
                     <div className="flex items-center gap-2">
                       <ApperIcon name="MapPin" size={16} />
-                      <span>{application.job.location}</span>
+                      <span>{application.job?.location_c}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <ApperIcon name="Briefcase" size={16} />
-                      <span>{application.job.employmentType}</span>
+                      <span>{application.job?.employment_type_c}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <ApperIcon name="Calendar" size={16} />
-                      <span>Applied {format(new Date(application.appliedAt), "MMM d, yyyy")}</span>
+                      <span>Applied {format(new Date(application.applied_at_c), "MMM d, yyyy")}</span>
                     </div>
                   </div>
 
-                  {application.coverLetter && (
+                  {application.cover_letter_c && (
                     <div className="bg-slate-50 rounded-lg p-4 mb-3">
                       <p className="text-sm font-medium text-slate-700 mb-2">Cover Letter:</p>
                       <p className="text-sm text-slate-600 line-clamp-3">
-                        {application.coverLetter}
+                        {application.cover_letter_c}
                       </p>
                     </div>
                   )}
@@ -131,14 +133,14 @@ function MyApplications() {
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/jobs/${application.jobId}`);
+                        navigate(`/jobs/${application.job_id_c?.Id || application.job_id_c}`);
                       }}
                     >
                       View Job Details
                     </Button>
-                    {application.resumeUrl && (
+                    {application.resume_url_c && (
                       <a
-                        href={application.resumeUrl}
+                        href={application.resume_url_c}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}

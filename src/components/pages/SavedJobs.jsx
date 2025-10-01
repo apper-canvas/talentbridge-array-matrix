@@ -22,23 +22,24 @@ function SavedJobs() {
     loadSavedJobs();
   }, []);
 
-  const loadSavedJobs = async () => {
+const loadSavedJobs = async () => {
     try {
       setLoading(true);
       setError("");
       const saved = await savedJobsService.getAll("1");
-      const jobIds = saved.map(s => s.jobId);
-      
+      const jobIds = saved.map((s) => s.job_id_c?.Id || s.job_id_c);
+
       if (jobIds.length === 0) {
         setSavedJobs([]);
         return;
       }
 
       const jobs = await jobService.getByIds(jobIds);
-      
+
       const jobsWithEmployers = await Promise.all(
         jobs.map(async (job) => {
-          const employer = await employerService.getByUserId(job.employerId);
+          const employerId = job.employer_id_c?.Id || job.employer_id_c;
+          const employer = await employerService.getByUserId(employerId);
           return { ...job, employer };
         })
       );
@@ -94,7 +95,7 @@ function SavedJobs() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {savedJobs.map((job) => (
-          <Card
+<Card
             key={job.Id}
             hover
             onClick={() => navigate(`/jobs/${job.Id}`)}
@@ -107,30 +108,30 @@ function SavedJobs() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 line-clamp-1">
-                    {job.employer?.companyName || "Company"}
+                    {job.employer?.company_name_c || "Company"}
                   </h3>
-                  <p className="text-sm text-slate-500">{job.location}</p>
+                  <p className="text-sm text-slate-500">{job.location_c}</p>
                 </div>
               </div>
             </div>
 
             <h2 className="text-lg font-semibold text-slate-900 mb-3 line-clamp-2">
-              {job.title}
+              {job.title_c}
             </h2>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              <Badge variant="secondary">{job.employmentType}</Badge>
-              <Badge variant="secondary">{job.experienceLevel}</Badge>
+              <Badge variant="secondary">{job.employment_type_c}</Badge>
+              <Badge variant="secondary">{job.experience_level_c}</Badge>
             </div>
 
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <ApperIcon name="DollarSign" size={16} />
-                <span>{formatSalary(job.salaryMin, job.salaryMax)}</span>
+                <span>{formatSalary(job.salary_min_c, job.salary_max_c)}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-600">
                 <ApperIcon name="MapPin" size={16} />
-                <span>{job.location}</span>
+                <span>{job.location_c}</span>
               </div>
             </div>
 

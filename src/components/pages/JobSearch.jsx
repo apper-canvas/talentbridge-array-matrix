@@ -55,9 +55,13 @@ const JobSearch = () => {
     loadJobs();
   };
 
-  const getEmployerName = (employerId) => {
-    const employer = employers.find((e) => e.userId === employerId);
-    return employer ? employer.companyName : "Unknown Company";
+const getEmployerName = (employerId) => {
+    const empId = employerId?.Id || employerId;
+    const employer = employers.find((e) => {
+      const userIdValue = e.user_id_c?.Id || e.user_id_c;
+      return userIdValue === empId;
+    });
+    return employer ? employer.company_name_c : "Unknown Company";
   };
 
   const formatSalary = (min, max) => {
@@ -184,7 +188,7 @@ const JobSearch = () => {
           <div className="grid gap-6">
             {jobs.map((job) => (
               <Card
-                key={job.Id}
+key={job.Id}
                 hover
                 className="p-6 cursor-pointer"
                 onClick={() => navigate(`/jobseeker/jobs/${job.Id}`)}
@@ -197,39 +201,39 @@ const JobSearch = () => {
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xl font-semibold text-slate-900 mb-1">
-                          {job.title}
+                          {job.title_c}
                         </h3>
                         <p className="text-slate-600 flex items-center gap-2">
                           <ApperIcon name="Building2" size={16} />
-                          {getEmployerName(job.employerId)}
+                          {getEmployerName(job.employer_id_c)}
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-3 mb-3">
                       <Badge variant="default" className="flex items-center gap-1">
                         <ApperIcon name="MapPin" size={14} />
-                        {job.location}
+                        {job.location_c}
                       </Badge>
                       <Badge variant="info" className="flex items-center gap-1">
                         <ApperIcon name="Briefcase" size={14} />
-                        {job.employmentType.charAt(0).toUpperCase() + job.employmentType.slice(1)}
+                        {job.employment_type_c?.charAt(0).toUpperCase() + job.employment_type_c?.slice(1)}
                       </Badge>
                       <Badge variant="success" className="flex items-center gap-1">
                         <ApperIcon name="DollarSign" size={14} />
-                        {formatSalary(job.salaryMin, job.salaryMax)}
+                        {formatSalary(job.salary_min_c, job.salary_max_c)}
                       </Badge>
                       <Badge variant="default">
-                        {job.experienceLevel.charAt(0).toUpperCase() + job.experienceLevel.slice(1)}
+                        {job.experience_level_c?.charAt(0).toUpperCase() + job.experience_level_c?.slice(1)}
                       </Badge>
                     </div>
-                    
+
                     <p className="text-slate-600 line-clamp-2 mb-3">
-                      {job.description}
+                      {job.description_c}
                     </p>
-                    
+
                     <div className="flex flex-wrap gap-2">
-                      {job.requirements.slice(0, 3).map((req, idx) => (
+                      {job.requirements?.slice(0, 3).map((req, idx) => (
                         <span
                           key={idx}
                           className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded"
@@ -237,18 +241,18 @@ const JobSearch = () => {
                           {req}
                         </span>
                       ))}
-                      {job.requirements.length > 3 && (
+                      {job.requirements?.length > 3 && (
                         <span className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded">
                           +{job.requirements.length - 3} more
                         </span>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col items-end gap-3 flex-shrink-0">
-                    <StatusPill status={job.status} />
+                    <StatusPill status={job.status_c} />
                     <p className="text-sm text-slate-500">
-                      Posted {format(new Date(job.postedAt), "MMM dd, yyyy")}
+                      Posted {format(new Date(job.posted_at_c), "MMM dd, yyyy")}
                     </p>
                     <Button
                       onClick={(e) => {

@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
 import RoleIndicator from "@/components/molecules/RoleIndicator";
-
+import { AuthContext } from "@/App";
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -80,7 +80,7 @@ const Header = () => {
           </nav>
 
           {/* User Menu */}
-          <div className="hidden md:flex items-center gap-4">
+<div className="hidden md:flex items-center gap-4">
             {currentUser.role && <RoleIndicator role={currentUser.role} />}
             <div className="relative">
               <button
@@ -104,8 +104,11 @@ const Header = () => {
                     Settings
                   </button>
                   <hr className="my-1" />
-                  <button 
-                    onClick={() => navigate("/")}
+                  <button
+                    onClick={() => {
+                      const { logout } = useContext(AuthContext);
+                      logout();
+                    }}
                     className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                   >
                     <ApperIcon name="LogOut" size={16} />
@@ -145,15 +148,16 @@ const Header = () => {
                 </Link>
               ))}
               <hr className="my-2" />
-              {currentUser.role && (
+{currentUser.role && (
                 <div className="px-4 py-2">
                   <RoleIndicator role={currentUser.role} />
                 </div>
               )}
               <button
                 onClick={() => {
+                  const { logout } = useContext(AuthContext);
                   setMobileMenuOpen(false);
-                  navigate("/");
+                  logout();
                 }}
                 className="px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2"
               >

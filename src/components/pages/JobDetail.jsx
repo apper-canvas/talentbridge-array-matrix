@@ -36,7 +36,8 @@ const loadJobDetails = async () => {
       setLoading(true);
       setError("");
       const jobData = await jobService.getById(id);
-      const employerData = await employerService.getByUserId(jobData.employerId);
+      const employerId = jobData.employer_id_c?.Id || jobData.employer_id_c;
+      const employerData = await employerService.getByUserId(employerId);
       setJob(jobData);
       setEmployer(employerData);
     } catch (err) {
@@ -55,7 +56,7 @@ const loadJobDetails = async () => {
     }
   };
 
-  const handleApply = async () => {
+const handleApply = async () => {
     if (!coverLetter.trim()) {
       toast.error("Please write a cover letter");
       return;
@@ -64,10 +65,10 @@ const loadJobDetails = async () => {
     try {
       setApplying(true);
       await applicationService.create({
-        jobId: job.Id.toString(),
-        candidateId: "1", // Mock user ID
-        coverLetter,
-        resumeUrl: "/resumes/john-doe.pdf",
+        job_id_c: job.Id,
+        candidate_id_c: "1",
+        cover_letter_c: coverLetter,
+        resume_url_c: "/resumes/john-doe.pdf",
       });
       toast.success("Application submitted successfully!");
       setShowApplicationModal(false);
@@ -126,47 +127,43 @@ const handleSaveToggle = async () => {
             <div className="flex-1">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">{job.title}</h1>
+<h1 className="text-3xl font-bold text-slate-900 mb-2">{job.title_c}</h1>
                   <p className="text-xl text-slate-600 flex items-center gap-2">
                     <ApperIcon name="Building2" size={20} />
-                    {employer?.companyName || "Unknown Company"}
+                    {employer?.company_name_c || "Unknown Company"}
                   </p>
                 </div>
-                <StatusPill status={job.status} />
+                <StatusPill status={job.status_c} />
               </div>
-              
+
               <div className="flex flex-wrap gap-3 mb-4">
                 <Badge variant="default" className="flex items-center gap-1">
                   <ApperIcon name="MapPin" size={16} />
-                  {job.location}
+                  {job.location_c}
                 </Badge>
                 <Badge variant="info" className="flex items-center gap-1">
                   <ApperIcon name="Clock" size={16} />
-                  {job.employmentType.charAt(0).toUpperCase() + job.employmentType.slice(1)}
+                  {job.employment_type_c?.charAt(0).toUpperCase() + job.employment_type_c?.slice(1)}
                 </Badge>
                 <Badge variant="success" className="flex items-center gap-1 text-base font-semibold">
                   <ApperIcon name="DollarSign" size={16} />
-                  {formatSalary(job.salaryMin, job.salaryMax)}
+                  {formatSalary(job.salary_min_c, job.salary_max_c)}
                 </Badge>
                 <Badge variant="default">
-                  {job.experienceLevel.charAt(0).toUpperCase() + job.experienceLevel.slice(1)} Level
+                  {job.experience_level_c?.charAt(0).toUpperCase() + job.experience_level_c?.slice(1)} Level
                 </Badge>
               </div>
-              
+
               <div className="flex gap-3">
                 <Button size="lg" onClick={() => setShowApplicationModal(true)}>
                   <ApperIcon name="Send" size={20} className="mr-2" />
                   Apply Now
                 </Button>
-<Button 
-                  variant="secondary" 
-                  size="lg"
-                  onClick={handleSaveToggle}
-                >
-                  <ApperIcon 
-                    name={isSaved ? "BookmarkCheck" : "Bookmark"} 
-                    size={20} 
-                    className="mr-2" 
+                <Button variant="secondary" size="lg" onClick={handleSaveToggle}>
+                  <ApperIcon
+                    name={isSaved ? "BookmarkCheck" : "Bookmark"}
+                    size={20}
+                    className="mr-2"
                   />
                   {isSaved ? "Unsave Job" : "Save Job"}
                 </Button>
@@ -184,7 +181,7 @@ const handleSaveToggle = async () => {
                 <ApperIcon name="FileText" size={20} />
                 Job Description
               </h2>
-              <p className="text-slate-600 whitespace-pre-line">{job.description}</p>
+              <p className="text-slate-600 whitespace-pre-line">{job.description_c}</p>
             </Card>
 
             {/* Requirements */}
@@ -194,7 +191,7 @@ const handleSaveToggle = async () => {
                 Requirements
               </h2>
               <ul className="space-y-3">
-                {job.requirements.map((req, index) => (
+                {job.requirements?.map((req, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <ApperIcon name="Check" size={14} className="text-green-600" />
@@ -226,7 +223,7 @@ const handleSaveToggle = async () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Company Info */}
-            {employer && (
+{employer && (
               <Card className="p-6">
                 <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
                   <ApperIcon name="Building2" size={20} />
@@ -235,17 +232,17 @@ const handleSaveToggle = async () => {
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm text-slate-600 mb-1">Company Name</p>
-                    <p className="font-medium text-slate-900">{employer.companyName}</p>
+                    <p className="font-medium text-slate-900">{employer.company_name_c}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-600 mb-1">Industry</p>
-                    <p className="font-medium text-slate-900">{employer.industry}</p>
+                    <p className="font-medium text-slate-900">{employer.industry_c}</p>
                   </div>
                   <div>
                     <p className="text-sm text-slate-600 mb-1">Company Size</p>
-                    <p className="font-medium text-slate-900">{employer.companySize} employees</p>
+                    <p className="font-medium text-slate-900">{employer.company_size_c} employees</p>
                   </div>
-                  {employer.verified && (
+                  {employer.verified_c && (
                     <Badge variant="success" className="flex items-center gap-1 w-fit">
                       <ApperIcon name="BadgeCheck" size={14} />
                       Verified Company
@@ -265,18 +262,18 @@ const handleSaveToggle = async () => {
                 <div>
                   <p className="text-sm text-slate-600 mb-1">Posted Date</p>
                   <p className="font-medium text-slate-900">
-                    {format(new Date(job.postedAt), "MMMM dd, yyyy")}
+                    {format(new Date(job.posted_at_c), "MMMM dd, yyyy")}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-600 mb-1">Application Deadline</p>
                   <p className="font-medium text-slate-900">
-                    {format(new Date(job.expiresAt), "MMMM dd, yyyy")}
+                    {format(new Date(job.expires_at_c), "MMMM dd, yyyy")}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-600 mb-1">Category</p>
-                  <p className="font-medium text-slate-900">{job.category}</p>
+                  <p className="font-medium text-slate-900">{job.category_c}</p>
                 </div>
               </div>
             </Card>
@@ -290,7 +287,7 @@ const handleSaveToggle = async () => {
           <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-slate-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">Apply for {job.title}</h2>
+<h2 className="text-2xl font-bold text-slate-900">Apply for {job.title_c}</h2>
                 <button
                   onClick={() => setShowApplicationModal(false)}
                   className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
