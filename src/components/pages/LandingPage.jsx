@@ -76,8 +76,8 @@ const LandingPage = () => {
             <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               <Card 
                 hover 
-                className="p-8 bg-white/10 backdrop-blur-md border-white/20 cursor-pointer"
-                onClick={() => navigate("/jobseeker/dashboard")}
+className="p-8 bg-white/10 backdrop-blur-md border-white/20 cursor-pointer"
+                onClick={() => navigate("/jobs")}
               >
                 <div className="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
                   <ApperIcon name="User" size={32} className="text-white" />
