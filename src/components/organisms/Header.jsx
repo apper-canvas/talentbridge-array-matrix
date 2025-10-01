@@ -9,6 +9,7 @@ const Header = () => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useContext(AuthContext);
 
   // Mock current user - in production, this would come from auth context
   const currentUser = {
@@ -105,8 +106,7 @@ const Header = () => {
                   </button>
                   <hr className="my-1" />
                   <button
-                    onClick={() => {
-                      const { logout } = useContext(AuthContext);
+onClick={() => {
                       logout();
                     }}
                     className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
@@ -154,8 +154,7 @@ const Header = () => {
                 </div>
               )}
               <button
-                onClick={() => {
-                  const { logout } = useContext(AuthContext);
+onClick={() => {
                   setMobileMenuOpen(false);
                   logout();
                 }}
