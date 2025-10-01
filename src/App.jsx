@@ -26,11 +26,10 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<LandingPage />} />
           
-          {/* Job Browsing Routes */}
+{/* Job Browsing Routes */}
           <Route path="jobs" element={<JobSearch />} />
-          <Route path="jobs/:id" element={<JobDetail />} />
+          <Route path="jobseeker/jobs/:id" element={<JobDetail />} />
           <Route path="jobs/saved" element={<SavedJobs />} />
-          
           {/* Candidate Routes */}
           <Route path="applications" element={<MyApplications />} />
         </Route>
