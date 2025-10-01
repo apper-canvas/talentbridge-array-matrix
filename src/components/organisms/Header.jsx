@@ -22,8 +22,9 @@ const Header = () => {
     switch (currentUser.role) {
       case "jobseeker":
         return [
-          { label: "Find Jobs", path: "/jobseeker/jobs", icon: "Briefcase" },
-          { label: "My Applications", path: "/jobseeker/applications", icon: "FileText" },
+{ label: "Find Jobs", path: "/jobs", icon: "Briefcase" },
+          { label: "Saved Jobs", path: "/jobs/saved", icon: "Bookmark" },
+          { label: "My Applications", path: "/applications", icon: "FileText" },
           { label: "Profile", path: "/jobseeker/profile", icon: "User" },
         ];
       case "employer":

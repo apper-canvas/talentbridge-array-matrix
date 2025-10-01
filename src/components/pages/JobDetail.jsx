@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import jobService from "@/services/api/jobService";
 import employerService from "@/services/api/employerService";
 import applicationService from "@/services/api/applicationService";
+import savedJobsService from "@/services/api/savedJobsService";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Card from "@/components/atoms/Card";
@@ -17,19 +18,20 @@ import { format } from "date-fns";
 const JobDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [job, setJob] = useState(null);
+const [job, setJob] = useState(null);
   const [employer, setEmployer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
   const [applying, setApplying] = useState(false);
-
-  useEffect(() => {
+  const [isSaved, setIsSaved] = useState(false);
+useEffect(() => {
     loadJobDetails();
+    checkSavedStatus();
   }, [id]);
 
-  const loadJobDetails = async () => {
+const loadJobDetails = async () => {
     try {
       setLoading(true);
       setError("");
@@ -41,6 +43,15 @@ const JobDetail = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkSavedStatus = async () => {
+    try {
+      const saved = await savedJobsService.isSaved(id);
+      setIsSaved(saved);
+    } catch (err) {
+      console.error("Error checking saved status:", err);
     }
   };
 
@@ -65,6 +76,22 @@ const JobDetail = () => {
       toast.error(err.message);
     } finally {
       setApplying(false);
+    }
+  };
+
+const handleSaveToggle = async () => {
+    try {
+      if (isSaved) {
+        await savedJobsService.unsave(id);
+        setIsSaved(false);
+        toast.success("Job removed from saved jobs");
+      } else {
+        await savedJobsService.save(id);
+        setIsSaved(true);
+        toast.success("Job saved successfully");
+      }
+    } catch (err) {
+      toast.error(err.message);
     }
   };
 
@@ -131,9 +158,17 @@ const JobDetail = () => {
                   <ApperIcon name="Send" size={20} className="mr-2" />
                   Apply Now
                 </Button>
-                <Button variant="secondary" size="lg">
-                  <ApperIcon name="Bookmark" size={20} className="mr-2" />
-                  Save Job
+<Button 
+                  variant="secondary" 
+                  size="lg"
+                  onClick={handleSaveToggle}
+                >
+                  <ApperIcon 
+                    name={isSaved ? "BookmarkCheck" : "Bookmark"} 
+                    size={20} 
+                    className="mr-2" 
+                  />
+                  {isSaved ? "Unsave Job" : "Save Job"}
                 </Button>
               </div>
             </div>

@@ -94,6 +94,10 @@ const jobService = {
 
     return results;
   },
+async getByIds(ids) {
+    await delay(300);
+    return jobsData.filter(job => ids.includes(job.Id.toString()));
+  },
 };
 
 export default jobService;

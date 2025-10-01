@@ -4,6 +4,8 @@ import React from "react";
 import LandingPage from "@/components/pages/LandingPage";
 import JobSearch from "@/components/pages/JobSearch";
 import JobDetail from "@/components/pages/JobDetail";
+import SavedJobs from "@/components/pages/SavedJobs";
+import MyApplications from "@/components/pages/MyApplications";
 import Layout from "@/components/organisms/Layout";
 
 function App() {
@@ -27,6 +29,10 @@ function App() {
           {/* Job Browsing Routes */}
           <Route path="jobs" element={<JobSearch />} />
           <Route path="jobs/:id" element={<JobDetail />} />
+          <Route path="jobs/saved" element={<SavedJobs />} />
+          
+          {/* Candidate Routes */}
+          <Route path="applications" element={<MyApplications />} />
         </Route>
       </Routes>
     </BrowserRouter>
